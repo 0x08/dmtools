@@ -1,49 +1,52 @@
-# ⚔️ DM Encounter & Initiative Tracker
+# ⚔️ Ben's Encounter Tracker
 
-A lightweight, blazing-fast, pure frontend web application designed for Dungeon Masters running D&D or other tabletop RPGs. It handles initiative order, tracks monster hit points with instant math modifiers, and saves a local bestiary using your browser's native memory.
+A lightweight, blazing-fast, pure frontend web application designed for Dungeon Masters running high-stakes tabletop RPG combat. It handles initiative order with active turn management, tracks monster hit points with instant math modifiers, and saves a persistent library of creatures right inside your browser's native memory.
 
-No servers, no databases, no installation required. Just open the HTML file and play.
+No servers, no databases, no complex setup. Just open the HTML file and play.
 
 ---
 
 ## 🚀 Quick Start
 
-1. **Download the code**: Save the `dm_tracker.html` file to your computer.
-2. **Launch**: Double-click the file to open it in any web browser (Chrome, Firefox, Edge, Safari).
-3. **Play**: Bookmark it for instant access behind your DM screen.
+1. **Download the code**: Save the `dm_tracker.html` file to your local computer.
+2. **Launch**: Double-click the file to open it in any modern web browser (Chrome, Firefox, Edge, Safari).
+3. **Play**: Bookmark it for immediate access behind your DM screen.
 
 ---
 
 ## 🛠️ Key Features
 
-### 1. Dynamic Initiative Tracking
-* Input character or monster names, add their rolled initiative, and click **Sort 🎲** to instantly arrange combatants from highest to lowest.
-* Modify initiative scores directly inside the live table if a creature's order changes mid-round.
+### 1. Active Turn & Round Manager
 
-### 2. Smart HP Tracker (Monsters Only)
-* **Relative Math Parsing**: Instead of doing mental math, click a monster's HP box, type a modifier like `-11` or `+5`, and press **Enter**. The tool updates the math automatically.
-* **Auto-Highlight**: Clicking or tapping an HP input automatically selects the entire text, letting you update health scores without pressing backspace.
-* **Visual Death States**: When a monster hits 0 HP or lower, its name turns gray, a `💀` icon replaces its avatar, and its health bar strikes through.
+- **Next / Previous Cycling**: Use the **Next ▶** and **◀ Previous** buttons to cycle through characters seamlessly. The tracker automatically loops cleanly from the bottom of the order back to the top (and vice versa).
+- **Visual Turn Frame**: The combatant whose turn it is instantly highlights with an amber glow, a pulsing `ACTIVE` banner, and a `⚔️` icon so you can see who is acting at a glance.
+- **Smart Death Skipping 🤖**: When a monster hits `0` HP or lower, the turn tracker will automatically skip past them during turn cycles, ensuring you only pause on combatants who are actually conscious.
 
-### 3. Integrated Library & Bestiary
-* **One-Click Spawning**: Tap any profile card in your Bestiary to instantly throw that creature into the active initiative order.
-* **Auto-Numbering Duplicates**: Spawning multiple identical creatures (e.g., clicking "Goblin" 4 times) automatically names them `Goblin #1`, `Goblin #2`, `Goblin #3`, and `Goblin #4`.
-* **Persistent Memory**: Player Characters and Monsters are saved directly to your browser's `localStorage`. They remain there safely even if you close the browser or restart your computer.
+### 2. Streamlined Encounter Entry
 
----
+- **Instant Re-focus**: Pressing Enter to add a combatant automatically snaps your typing cursor straight back into the **Name** field, allowing you to queue up a whole group of enemies entirely from your keyboard.
+- **Auto-Select Fields**: Clicking into any **Initiative** score or **HP** field instantly highlights the entire value, allowing you to overwrite or modify text without wasting time hitting backspace.
+- **Auto-Numbering Duplicates**: Adding multiple identical monsters (e.g., clicking your "Goblin" template 4 times) automatically decorates them as `Goblin #1`, `Goblin #2`, etc.
 
-## ⌨️ Shortcuts & Tips
+### 3. Integrated Collapsible Bestiary
 
-* **In the Main Tracker**:
-  * Type `-Value` or `+Value` in the HP box and hit **Enter** to modify hit points.
-  * Type a flat number (e.g., `25`) and hit **Enter** to overwrite HP completely.
-* **In the Bestiary Creator**:
-  * Type a Name, type a Max HP value, and press **Enter** to rapidly build your library before game night. Leaving HP at `0` automatically registers the profile as a Player Character.
+- **Accordion View**: The Library / Bestiary module stays neatly collapsed by default to keep your screen tidy, unfolding with a single click when you need to spawn reinforcements.
+- **One-Click Spawning**: Click any profile card inside your library to instantly drop that character or creature into the active initiative order with their default stats.
+- **Local Storage Save**: Creatures added to your library are committed to HTML5 `localStorage`. They will stay right there safely even if you close your laptop or clear your browser cache.
 
 ---
 
-## 🔒 Privacy & Architecture
+## ⌨️ Shortcuts & Math Engine
 
-* **Zero Tracking**: This app does not connect to any server, track analytics, or store cookies. Your campaign data never leaves your machine.
-* **Storage Tech**: It uses HTML5 `localStorage` to save your Bestiary template variables. 
-* **Styling**: Built utilizing vanilla JavaScript and a Tailwind CSS CDN package for a native, eye-strain-free dark mode.
+- **In the Active Initiative List**:
+  - Click an HP box, type `-Value` (e.g., `-22`) or `+Value` (e.g., `+10`), and press **Enter** to let the engine calculate damage/healing dynamically.
+  - Type a flat number (e.g., `45`) and hit **Enter** to completely overwrite their current HP state.
+  - Clicking **Sort 🎲** will arrange combatants from highest initiative to lowest and automatically lock the active turn to the top of the round.
+- **In the Bestiary Creator**:
+  - Leaving Max HP at `0` automatically registers a profile as a Player Character (`🛡️`). Setting it above `0` registers them as a Monster (`😈`).
+
+---
+
+## 🔒 Security & Privacy
+
+- **100% Offline**: This application doesn't collect analytics, communicate with cloud data silos, or make external API requests. Your campaign notes and character names remain strictly private to your computer.

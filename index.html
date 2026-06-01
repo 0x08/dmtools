@@ -1,369 +1,519 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Ben's Encounter Tracker</title>
     <!-- Tailwind CSS for sleek dark mode styling -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-</head>
-<body class="bg-gray-900 text-gray-100 min-h-screen p-6">
-
+  </head>
+  <body class="bg-gray-900 text-gray-100 min-h-screen p-6">
     <div class="max-w-6xl mx-auto">
-        <header class="mb-8 border-b border-gray-700 pb-4">
-            <h1 class="text-3xl font-bold text-red-500">⚔️ Ben's Encounter Tracker</h1>
-            <p class="text-gray-400 text-sm">Pure frontend game engine. LocalStorage enabled.</p>
-        </header>
+      <header class="mb-8 border-b border-gray-700 pb-4">
+        <h1 class="text-3xl font-bold text-red-500">
+          ⚔️ Ben's Encounter Tracker
+        </h1>
+        <p class="text-gray-400 text-sm">
+          Pure frontend game engine. LocalStorage enabled.
+        </p>
+      </header>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            
-            <!-- LEFT COLUMN: MANAGEMENT & INPUT -->
-            <div class="space-y-6">
-                
-                <!-- BLOCK 1: ADD COMBATANT -->
-                <div class="bg-gray-800 p-5 rounded-lg shadow-lg">
-                    <h2 class="text-xl font-semibold mb-4 text-gray-200">Add to Encounter</h2>
-                    
-                    <form id="combatant-form" class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium mb-1">Name</label>
-                            <input type="text" id="name" list="saved-names" oninput="handleNameInput(this.value)" required class="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white focus:outline-none focus:border-red-500">
-                            <datalist id="saved-names"></datalist>
-                        </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- LEFT COLUMN: MANAGEMENT & INPUT -->
+        <div class="space-y-6">
+          <!-- BLOCK 1: ADD COMBATANT -->
+          <div class="bg-gray-800 p-5 rounded-lg shadow-lg">
+            <h2 class="text-xl font-semibold mb-4 text-gray-200">
+              Add to Encounter
+            </h2>
 
-                        <div class="grid grid-cols-2 gap-2">
-                            <div>
-                                <label class="block text-sm font-medium mb-1">Initiative</label>
-                                <input type="number" id="initiative" value="0" class="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white focus:outline-none focus:border-red-500">
-                            </div>
-                            <div class="flex items-end pb-2">
-                                <label class="inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" id="is-monster" class="sr-only peer">
-                                    <div class="relative w-11 height-6 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-600 h-6"></div>
-                                    <span class="ms-3 text-sm font-medium text-gray-300">Monster?</span>
-                                </label>
-                            </div>
-                        </div>
+            <form id="combatant-form" class="space-y-4">
+              <div>
+                <label class="block text-sm font-medium mb-1">Name</label>
+                <input
+                  type="text"
+                  id="name"
+                  list="saved-names"
+                  oninput="handleNameInput(this.value)"
+                  required
+                  class="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white focus:outline-none focus:border-red-500"
+                />
+                <datalist id="saved-names"></datalist>
+              </div>
 
-                        <div id="hp-group" class="hidden">
-                            <label class="block text-sm font-medium mb-1">Max HP</label>
-                            <input type="number" id="max-hp" value="10" class="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white focus:outline-none focus:border-red-500">
-                        </div>
-
-                        <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition duration-200">
-                            🛡️ Roll into Initiative
-                        </button>
-                    </form>
+              <div class="grid grid-cols-2 gap-2">
+                <div>
+                  <label class="block text-sm font-medium mb-1"
+                    >Initiative</label
+                  >
+                  <input
+                    type="number"
+                    id="initiative"
+                    value="0"
+                    class="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white focus:outline-none focus:border-red-500"
+                  />
                 </div>
+                <div class="flex items-end pb-2">
+                  <label class="inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      id="is-monster"
+                      class="sr-only peer"
+                    />
+                    <div
+                      class="relative w-11 height-6 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-600 h-6"
+                    ></div>
+                    <span class="ms-3 text-sm font-medium text-gray-300"
+                      >Monster?</span
+                    >
+                  </label>
+                </div>
+              </div>
 
-                <!-- BLOCK 2: MANAGE SAVED TEMPLATES (THE COLLAPSIBLE LIBRARY) -->
-                <details class="bg-gray-800 p-5 rounded-lg shadow-lg group select-none">
-                    <summary class="text-lg font-semibold text-gray-200 cursor-pointer list-none flex justify-between items-center focus:outline-none">
-                        <span>📖 Library / Bestiary</span>
-                        <div class="flex items-center space-x-3">
-                            <button onclick="clearStorageMemory(event)" class="text-[10px] bg-red-950 text-red-300 hover:bg-red-900 border border-red-700 px-2 py-0.5 rounded transition">
-                                Wipe All
-                            </button>
-                            <span class="text-gray-400 transition-transform duration-200 group-open:rotate-180">▼</span>
-                        </div>
-                    </summary>
-                    
-                    <div class="mt-4 space-y-4">
-                        <!-- Quick Add Template Sub-Form -->
-                        <div class="bg-gray-900 p-3 rounded border border-gray-700 space-y-2">
-                            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Quick-Save Template</p>
-                            <div class="grid grid-cols-2 gap-2">
-                                <input type="text" id="lib-name" placeholder="Name (e.g. Orc)" onkeydown="handleLibraryKeydown(event)" class="bg-gray-800 border border-gray-700 rounded px-2 py-1 text-xs text-white focus:outline-none">
-                                <input type="number" id="lib-hp" placeholder="HP (0 if PC)" onkeydown="handleLibraryKeydown(event)" class="bg-gray-800 border border-gray-700 rounded px-2 py-1 text-xs text-white focus:outline-none">
-                            </div>
-                            <button onclick="saveTemplateFromLibrary()" class="w-full bg-gray-700 hover:bg-gray-600 text-white text-xs font-bold py-1 rounded transition">
-                                + Add to Library
-                            </button>
-                        </div>
+              <div id="hp-group" class="hidden">
+                <label class="block text-sm font-medium mb-1">Max HP</label>
+                <input
+                  type="number"
+                  id="max-hp"
+                  value="10"
+                  class="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white focus:outline-none focus:border-red-500"
+                />
+              </div>
 
-                        <!-- List of Saved Profiles -->
-                        <div>
-                            <p class="text-[11px] text-gray-400 mb-1 italic">⚡ Click a profile card below to instantly spawn it:</p>
-                            <div class="max-h-60 overflow-y-auto space-y-1 pr-1 border-t border-gray-700 pt-2" id="library-list">
-                                <!-- Injected via JS -->
-                            </div>
-                        </div>
-                    </div>
-                </details>
+              <button
+                type="submit"
+                class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition duration-200"
+              >
+                🛡️ Roll into Initiative
+              </button>
+            </form>
+          </div>
 
+          <!-- BLOCK 2: MANAGE SAVED TEMPLATES (THE COLLAPSIBLE LIBRARY) -->
+          <details
+            class="bg-gray-800 p-5 rounded-lg shadow-lg group select-none"
+          >
+            <summary
+              class="text-lg font-semibold text-gray-200 cursor-pointer list-none flex justify-between items-center focus:outline-none"
+            >
+              <span>📖 Library / Bestiary</span>
+              <div class="flex items-center space-x-3">
+                <button
+                  onclick="clearStorageMemory(event)"
+                  class="text-[10px] bg-red-950 text-red-300 hover:bg-red-900 border border-red-700 px-2 py-0.5 rounded transition"
+                >
+                  Wipe All
+                </button>
+                <span
+                  class="text-gray-400 transition-transform duration-200 group-open:rotate-180"
+                  >▼</span
+                >
+              </div>
+            </summary>
+
+            <div class="mt-4 space-y-4">
+              <!-- Quick Add Template Sub-Form -->
+              <div
+                class="bg-gray-900 p-3 rounded border border-gray-700 space-y-2"
+              >
+                <p
+                  class="text-xs font-semibold text-gray-400 uppercase tracking-wider"
+                >
+                  Quick-Save Template
+                </p>
+                <div class="grid grid-cols-2 gap-2">
+                  <input
+                    type="text"
+                    id="lib-name"
+                    placeholder="Name (e.g. Orc)"
+                    onkeydown="handleLibraryKeydown(event)"
+                    class="bg-gray-800 border border-gray-700 rounded px-2 py-1 text-xs text-white focus:outline-none"
+                  />
+                  <input
+                    type="number"
+                    id="lib-hp"
+                    placeholder="HP (0 if PC)"
+                    onkeydown="handleLibraryKeydown(event)"
+                    class="bg-gray-800 border border-gray-700 rounded px-2 py-1 text-xs text-white focus:outline-none"
+                  />
+                </div>
+                <button
+                  onclick="saveTemplateFromLibrary()"
+                  class="w-full bg-gray-700 hover:bg-gray-600 text-white text-xs font-bold py-1 rounded transition"
+                >
+                  + Add to Library
+                </button>
+              </div>
+
+              <!-- List of Saved Profiles -->
+              <div>
+                <p class="text-[11px] text-gray-400 mb-1 italic">
+                  ⚡ Click a profile card below to instantly spawn it:
+                </p>
+                <div
+                  class="max-h-60 overflow-y-auto space-y-1 pr-1 border-t border-gray-700 pt-2"
+                  id="library-list"
+                >
+                  <!-- Injected via JS -->
+                </div>
+              </div>
             </div>
-
-            <!-- RIGHT COLUMN: INITIATIVE LIST -->
-            <div class="bg-gray-800 p-5 rounded-lg shadow-lg md:col-span-2 h-fit">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4 pb-4 border-b border-gray-700">
-                    <div>
-                        <h2 class="text-xl font-semibold text-gray-200">Initiative Order</h2>
-                    </div>
-                    
-                    <!-- TURN MANAGEMENT BUTTONS -->
-                    <div class="flex items-center space-x-2 w-full sm:w-auto justify-end">
-                        <button onclick="changeTurn(-1)" class="bg-gray-700 hover:bg-gray-600 text-white text-sm font-bold py-2 px-3 rounded transition shadow">
-                            ◀ Previous
-                        </button>
-                        <button onclick="changeTurn(1)" class="bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-bold py-2 px-5 rounded transition shadow flex items-center gap-1">
-                            Next ▶
-                        </button>
-                        <span class="text-gray-600 px-1">|</span>
-                        <button onclick="sortInitiative()" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold py-2 px-3 rounded transition shadow">
-                            Sort 🎲
-                        </button>
-                        <button onclick="clearEncounter()" class="bg-gray-700 hover:bg-gray-600 text-gray-400 hover:text-gray-200 text-sm font-bold py-2 px-3 rounded transition">
-                            Clear
-                        </button>
-                    </div>
-                </div>
-
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="border-b border-gray-700 text-gray-400 text-sm">
-                                <th class="py-2 px-3 w-16">Init</th>
-                                <th class="py-2 px-3">Name</th>
-                                <th class="py-2 px-3 w-48">HP Tracker</th>
-                                <th class="py-2 px-3 w-12 text-center">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tracker-table-body">
-                            <!-- Rows injected dynamically by JS -->
-                        </tbody>
-                    </table>
-                </div>
-                <div class="mt-4 text-xs text-gray-500 italic space-y-1">
-                    <p>💡 Tip: Click an HP box or an Initiative box to auto-select its value for lightning-fast edits.</p>
-                    <p>🤖 Dead monsters (0 HP or lower) are automatically skipped when cycling turns.</p>
-                </div>
-            </div>
+          </details>
         </div>
+
+        <!-- RIGHT COLUMN: INITIATIVE LIST -->
+        <div class="bg-gray-800 p-5 rounded-lg shadow-lg md:col-span-2 h-fit">
+          <div
+            class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4 pb-4 border-b border-gray-700"
+          >
+            <div>
+              <h2 class="text-xl font-semibold text-gray-200">
+                Initiative Order
+              </h2>
+            </div>
+
+            <!-- TURN MANAGEMENT BUTTONS -->
+            <div
+              class="flex items-center space-x-2 w-full sm:w-auto justify-end"
+            >
+              <button
+                onclick="changeTurn(-1)"
+                class="bg-gray-700 hover:bg-gray-600 text-white text-sm font-bold py-2 px-3 rounded transition shadow"
+              >
+                ◀ Previous
+              </button>
+              <button
+                onclick="changeTurn(1)"
+                class="bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-bold py-2 px-5 rounded transition shadow flex items-center gap-1"
+              >
+                Next ▶
+              </button>
+              <span class="text-gray-600 px-1">|</span>
+              <button
+                onclick="sortInitiative()"
+                class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold py-2 px-3 rounded transition shadow"
+              >
+                Sort 🎲
+              </button>
+              <button
+                onclick="clearEncounter()"
+                class="bg-gray-700 hover:bg-gray-600 text-gray-400 hover:text-gray-200 text-sm font-bold py-2 px-3 rounded transition"
+              >
+                Clear
+              </button>
+            </div>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="border-b border-gray-700 text-gray-400 text-sm">
+                  <th class="py-2 px-3 w-16">Init</th>
+                  <th class="py-2 px-3">Name</th>
+                  <th class="py-2 px-3 w-48">HP Tracker</th>
+                  <th class="py-2 px-3 w-12 text-center">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="tracker-table-body">
+                <!-- Rows injected dynamically by JS -->
+              </tbody>
+            </table>
+          </div>
+          <div class="mt-4 text-xs text-gray-500 italic space-y-1">
+            <p>
+              💡 Tip: Click an HP box or an Initiative box to auto-select its
+              value for lightning-fast edits.
+            </p>
+            <p>
+              🤖 Dead monsters (0 HP or lower) are automatically skipped when
+              cycling turns.
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
 
     <script>
-        // --- STATE MANAGEMENT ---
-        let combatants = [];
-        let savedTemplates = JSON.parse(localStorage.getItem('dm_combat_templates')) || [];
-        let activeTurnIndex = null; 
+      // --- STATE MANAGEMENT ---
+      let combatants = [];
+      let savedTemplates =
+        JSON.parse(localStorage.getItem("dm_combat_templates")) || [];
+      let activeTurnIndex = null;
 
-        // --- DOM ELEMENTS ---
-        const form = document.getElementById('combatant-form');
-        const nameInput = document.getElementById('name');
-        const monsterToggle = document.getElementById('is-monster');
-        const hpGroup = document.getElementById('hp-group');
-        const tableBody = document.getElementById('tracker-table-body');
-        const datalist = document.getElementById('saved-names');
-        const maxHpInput = document.getElementById('max-hp');
-        const libraryList = document.getElementById('library-list');
+      // --- DOM ELEMENTS ---
+      const form = document.getElementById("combatant-form");
+      const nameInput = document.getElementById("name");
+      const monsterToggle = document.getElementById("is-monster");
+      const hpGroup = document.getElementById("hp-group");
+      const tableBody = document.getElementById("tracker-table-body");
+      const datalist = document.getElementById("saved-names");
+      const maxHpInput = document.getElementById("max-hp");
+      const libraryList = document.getElementById("library-list");
 
-        // --- INITIALIZATION ---
+      // --- INITIALIZATION ---
+      updateLibraryUI();
+
+      // Toggle Max HP input visibility based on Monster checkbox
+      monsterToggle.addEventListener("change", (e) => {
+        if (e.target.checked) {
+          hpGroup.classList.remove("hidden");
+        } else {
+          hpGroup.classList.add("hidden");
+        }
+      });
+
+      // Autofill logic when user types or clicks an option in the autocomplete box
+      function handleNameInput(currentValue) {
+        const match = savedTemplates.find(
+          (t) => t.name.toLowerCase() === currentValue.trim().toLowerCase(),
+        );
+        if (match) {
+          monsterToggle.checked = match.isMonster;
+          if (match.isMonster) {
+            hpGroup.classList.remove("hidden");
+            maxHpInput.value = match.maxHp;
+          } else {
+            hpGroup.classList.add("hidden");
+          }
+        }
+      }
+
+      // Processing helper function to add items into the turn tracker array
+      function addCombatantToEncounter(
+        baseName,
+        isMonster,
+        maxHp,
+        initiative = 0,
+      ) {
+        const existingMatches = combatants.filter(
+          (c) => c.baseName.toLowerCase() === baseName.toLowerCase(),
+        );
+        let finalName = baseName;
+
+        if (existingMatches.length > 0) {
+          if (existingMatches.length === 1) {
+            existingMatches[0].name = `${existingMatches[0].baseName} #1`;
+          }
+          finalName = `${baseName} #${existingMatches.length + 1}`;
+        }
+
+        combatants.push({
+          id: Date.now() + Math.random(),
+          baseName: baseName,
+          name: finalName,
+          initiative: initiative,
+          isMonster: isMonster,
+          currentHp: maxHp,
+          maxHp: maxHp,
+        });
+
+        renderTable();
+      }
+
+      // Form Submit handler (Manual Entry Box)
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        const baseName = nameInput.value.trim();
+        const initiative =
+          parseInt(document.getElementById("initiative").value) || 0;
+        const isMonster = monsterToggle.checked;
+        const maxHp = isMonster ? parseInt(maxHpInput.value) || 0 : null;
+
+        addCombatantToEncounter(baseName, isMonster, maxHp, initiative);
+        saveTemplateData(baseName, isMonster, maxHp);
+
+        form.reset();
+        hpGroup.classList.add("hidden");
+
+        // Re-focus the main name field instantly for continuous typing
+        nameInput.focus();
+      });
+
+      // --- LIBRARY CREATION & MANAGEMENT ---
+
+      function saveTemplateData(name, isMonster, maxHp) {
+        const existingIndex = savedTemplates.findIndex(
+          (t) => t.name.toLowerCase() === name.toLowerCase(),
+        );
+        const newTemplateData = { name, isMonster, maxHp };
+
+        if (existingIndex > -1) {
+          savedTemplates[existingIndex] = newTemplateData;
+        } else {
+          savedTemplates.push(newTemplateData);
+        }
+
+        localStorage.setItem(
+          "dm_combat_templates",
+          JSON.stringify(savedTemplates),
+        );
         updateLibraryUI();
+      }
 
-        // Toggle Max HP input visibility based on Monster checkbox
-        monsterToggle.addEventListener('change', (e) => {
-            if (e.target.checked) {
-                hpGroup.classList.remove('hidden');
-            } else {
-                hpGroup.classList.add('hidden');
-            }
-        });
+      function saveTemplateFromLibrary() {
+        const name = document.getElementById("lib-name").value.trim();
+        const hpValue = parseInt(document.getElementById("lib-hp").value) || 0;
 
-        // Autofill logic when user types or clicks an option in the autocomplete box
-        function handleNameInput(currentValue) {
-            const match = savedTemplates.find(t => t.name.toLowerCase() === currentValue.trim().toLowerCase());
-            if (match) {
-                monsterToggle.checked = match.isMonster;
-                if (match.isMonster) {
-                    hpGroup.classList.remove('hidden');
-                    maxHpInput.value = match.maxHp;
-                } else {
-                    hpGroup.classList.add('hidden');
-                }
-            }
+        if (!name) return alert("Please enter a template name.");
+
+        const isMonster = hpValue > 0;
+        saveTemplateData(name, isMonster, isMonster ? hpValue : null);
+
+        document.getElementById("lib-name").value = "";
+        document.getElementById("lib-hp").value = "";
+        document.getElementById("lib-name").focus();
+      }
+
+      function handleLibraryKeydown(event) {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          saveTemplateFromLibrary();
+        }
+      }
+
+      function deleteTemplate(name, event) {
+        event.stopPropagation();
+        savedTemplates = savedTemplates.filter(
+          (t) => t.name.toLowerCase() !== name.toLowerCase(),
+        );
+        localStorage.setItem(
+          "dm_combat_templates",
+          JSON.stringify(savedTemplates),
+        );
+        updateLibraryUI();
+      }
+
+      function spawnFromLibraryClick(name) {
+        const match = savedTemplates.find(
+          (t) => t.name.toLowerCase() === name.toLowerCase(),
+        );
+        if (match) {
+          addCombatantToEncounter(match.name, match.isMonster, match.maxHp, 0);
+        }
+      }
+
+      function updateLibraryUI() {
+        datalist.innerHTML = "";
+        libraryList.innerHTML = "";
+
+        if (savedTemplates.length === 0) {
+          libraryList.innerHTML = `<p class="text-xs text-gray-500 italic text-center py-2">Library is empty.</p>`;
+          return;
         }
 
-        // Processing helper function to add items into the turn tracker array
-        function addCombatantToEncounter(baseName, isMonster, maxHp, initiative = 0) {
-            const existingMatches = combatants.filter(c => c.baseName.toLowerCase() === baseName.toLowerCase());
-            let finalName = baseName;
+        savedTemplates.forEach((t) => {
+          const option = document.createElement("option");
+          option.value = t.name;
+          datalist.appendChild(option);
 
-            if (existingMatches.length > 0) {
-                if (existingMatches.length === 1) {
-                    existingMatches[0].name = `${existingMatches[0].baseName} #1`;
-                }
-                finalName = `${baseName} #${existingMatches.length + 1}`;
-            }
+          const item = document.createElement("div");
+          item.className =
+            "flex justify-between items-center bg-gray-750 text-xs p-2 rounded hover:bg-gray-700 border border-transparent hover:border-gray-600 cursor-pointer select-none transition group";
+          item.setAttribute(
+            "onclick",
+            `spawnFromLibraryClick('${t.name.replace(/'/g, "\\'")}')`,
+          );
 
-            combatants.push({
-                id: Date.now() + Math.random(),
-                baseName: baseName,
-                name: finalName,
-                initiative: initiative,
-                isMonster: isMonster,
-                currentHp: maxHp,
-                maxHp: maxHp
-            });
-
-            renderTable();
-        }
-
-        // Form Submit handler (Manual Entry Box)
-        form.addEventListener('submit', (e) => {
-            e.preventDefault();
-            
-            const baseName = nameInput.value.trim();
-            const initiative = parseInt(document.getElementById('initiative').value) || 0;
-            const isMonster = monsterToggle.checked;
-            const maxHp = isMonster ? (parseInt(maxHpInput.value) || 0) : null;
-
-            addCombatantToEncounter(baseName, isMonster, maxHp, initiative);
-            saveTemplateData(baseName, isMonster, maxHp);
-
-            form.reset();
-            hpGroup.classList.add('hidden');
-            
-            // Re-focus the main name field instantly for continuous typing
-            nameInput.focus();
-        });
-
-        // --- LIBRARY CREATION & MANAGEMENT ---
-        
-        function saveTemplateData(name, isMonster, maxHp) {
-            const existingIndex = savedTemplates.findIndex(t => t.name.toLowerCase() === name.toLowerCase());
-            const newTemplateData = { name, isMonster, maxHp };
-
-            if (existingIndex > -1) {
-                savedTemplates[existingIndex] = newTemplateData;
-            } else {
-                savedTemplates.push(newTemplateData);
-            }
-            
-            localStorage.setItem('dm_combat_templates', JSON.stringify(savedTemplates));
-            updateLibraryUI();
-        }
-
-        function saveTemplateFromLibrary() {
-            const name = document.getElementById('lib-name').value.trim();
-            const hpValue = parseInt(document.getElementById('lib-hp').value) || 0;
-            
-            if (!name) return alert("Please enter a template name.");
-            
-            const isMonster = hpValue > 0;
-            saveTemplateData(name, isMonster, isMonster ? hpValue : null);
-            
-            document.getElementById('lib-name').value = '';
-            document.getElementById('lib-hp').value = '';
-            document.getElementById('lib-name').focus();
-        }
-
-        function handleLibraryKeydown(event) {
-            if (event.key === 'Enter') {
-                event.preventDefault();
-                saveTemplateFromLibrary();
-            }
-        }
-
-        function deleteTemplate(name, event) {
-            event.stopPropagation(); 
-            savedTemplates = savedTemplates.filter(t => t.name.toLowerCase() !== name.toLowerCase());
-            localStorage.setItem('dm_combat_templates', JSON.stringify(savedTemplates));
-            updateLibraryUI();
-        }
-
-        function spawnFromLibraryClick(name) {
-            const match = savedTemplates.find(t => t.name.toLowerCase() === name.toLowerCase());
-            if (match) {
-                addCombatantToEncounter(match.name, match.isMonster, match.maxHp, 0);
-            }
-        }
-
-        function updateLibraryUI() {
-            datalist.innerHTML = '';
-            libraryList.innerHTML = '';
-
-            if (savedTemplates.length === 0) {
-                libraryList.innerHTML = `<p class="text-xs text-gray-500 italic text-center py-2">Library is empty.</p>`;
-                return;
-            }
-
-            savedTemplates.forEach(t => {
-                const option = document.createElement('option');
-                option.value = t.name;
-                datalist.appendChild(option);
-
-                const item = document.createElement('div');
-                item.className = "flex justify-between items-center bg-gray-750 text-xs p-2 rounded hover:bg-gray-700 border border-transparent hover:border-gray-600 cursor-pointer select-none transition group";
-                item.setAttribute("onclick", `spawnFromLibraryClick('${t.name.replace(/'/g, "\\'")}')`);
-                
-                item.innerHTML = `
-                    <span class="truncate font-medium ${t.isMonster ? 'text-red-400 group-hover:text-red-300' : 'text-green-400 group-hover:text-green-300'}">
-                        ${t.isMonster ? '😈' : '🛡️'} ${t.name} ${t.isMonster ? `(${t.maxHp} HP)` : '(PC)'}
+          item.innerHTML = `
+                    <span class="truncate font-medium ${
+                      t.isMonster
+                        ? "text-red-400 group-hover:text-red-300"
+                        : "text-green-400 group-hover:text-green-300"
+                    }">
+                        ${t.isMonster ? "😈" : "🛡️"} ${t.name} ${
+                          t.isMonster ? `(${t.maxHp} HP)` : "(PC)"
+                        }
                     </span>
-                    <button onclick="deleteTemplate('${t.name.replace(/'/g, "\\'")}', event)" class="text-gray-500 hover:text-red-400 px-1 font-bold text-sm" title="Delete profile template">✕</button>
+                    <button onclick="deleteTemplate('${t.name.replace(
+                      /'/g,
+                      "\\'",
+                    )}', event)" class="text-gray-500 hover:text-red-400 px-1 font-bold text-sm" title="Delete profile template">✕</button>
                 `;
-                libraryList.appendChild(item);
-            });
+          libraryList.appendChild(item);
+        });
+      }
+
+      // --- ACTIVE COMBAT MANAGEMENT ---
+
+      function renderTable() {
+        tableBody.innerHTML = "";
+
+        if (combatants.length === 0) {
+          tableBody.innerHTML = `<tr><td colspan="4" class="text-center py-8 text-gray-500">No combatants in initiative yet.</td></tr>`;
+          return;
         }
 
-        // --- ACTIVE COMBAT MANAGEMENT ---
+        combatants.forEach((c, index) => {
+          const isCurrentTurn = activeTurnIndex === index;
+          const tr = document.createElement("tr");
 
-        function renderTable() {
-            tableBody.innerHTML = '';
+          tr.className = `border-b border-gray-700 transition duration-150 ${
+            isCurrentTurn
+              ? "bg-amber-950/40 hover:bg-amber-950/50"
+              : "hover:bg-gray-750"
+          }`;
 
-            if (combatants.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="4" class="text-center py-8 text-gray-500">No combatants in initiative yet.</td></tr>`;
-                return;
-            }
+          const isDead = c.isMonster && c.currentHp <= 0;
 
-            combatants.forEach((c, index) => {
-                const isCurrentTurn = (activeTurnIndex === index);
-                const tr = document.createElement('tr');
-                
-                tr.className = `border-b border-gray-700 transition duration-150 ${isCurrentTurn ? 'bg-amber-950/40 hover:bg-amber-950/50' : 'hover:bg-gray-750'}`;
-
-                const isDead = c.isMonster && c.currentHp <= 0;
-
-                // HP Column layout
-                let hpHtml = `<span class="text-gray-500 text-sm">N/A (PC)</span>`;
-                if (c.isMonster) {
-                    hpHtml = `
+          // HP Column layout
+          let hpHtml = `<span class="text-gray-500 text-sm">N/A (PC)</span>`;
+          if (c.isMonster) {
+            hpHtml = `
                         <div class="flex items-center space-x-1">
-                            <input type="text" value="${c.currentHp}" 
+                            <input type="text" value="${c.currentHp}"
                                 onclick="this.select()"
-                                onkeydown="handleHpKeydown(event, ${c.id}, this)" 
-                                class="w-16 bg-gray-700 border border-gray-600 rounded px-1.5 py-0.5 text-center text-sm font-semibold cursor-pointer focus:cursor-text ${isDead ? 'text-red-500 line-through' : (isCurrentTurn ? 'text-amber-300' : 'text-green-400')}">
-                            <span class="text-gray-400 text-xs">/ ${c.maxHp}</span>
+                                onkeydown="handleHpKeydown(event, ${
+                                  c.id
+                                }, this)"
+                                class="w-16 bg-gray-700 border border-gray-600 rounded px-1.5 py-0.5 text-center text-sm font-semibold cursor-pointer focus:cursor-text ${
+                                  isDead
+                                    ? "text-red-500 line-through"
+                                    : isCurrentTurn
+                                      ? "text-amber-300"
+                                      : "text-green-400"
+                                }">
+                            <span class="text-gray-400 text-xs">/ ${
+                              c.maxHp
+                            }</span>
                         </div>
                     `;
-                }
+          }
 
-                let nameIcon = c.isMonster ? '😈' : '🛡️';
-                if (isDead) {
-                    nameIcon = '💀';
-                } else if (isCurrentTurn) {
-                    nameIcon = '⚔️';
-                }
+          let nameIcon = c.isMonster ? "😈" : "🛡️";
+          if (isDead) {
+            nameIcon = "💀";
+          } else if (isCurrentTurn) {
+            nameIcon = "⚔️";
+          }
 
-                let nameClass = 'text-green-400';
-                if (isDead) {
-                    nameClass = 'text-gray-500 line-through';
-                } else if (isCurrentTurn) {
-                    nameClass = 'text-amber-400 font-bold text-base';
-                } else if (c.isMonster) {
-                    nameClass = 'text-red-400';
-                }
+          let nameClass = "text-green-400";
+          if (isDead) {
+            nameClass = "text-gray-500 line-through";
+          } else if (isCurrentTurn) {
+            nameClass = "text-amber-400 font-bold text-base";
+          } else if (c.isMonster) {
+            nameClass = "text-red-400";
+          }
 
-                tr.innerHTML = `
+          tr.innerHTML = `
                     <td class="py-3 px-3">
                         <!-- Added onclick="this.select()" to the main row initiative input fields -->
-                        <input type="number" value="${c.initiative}" 
+                        <input type="number" value="${c.initiative}"
                             onclick="this.select()"
-                            onchange="updateInitiative(${c.id}, this.value)" 
-                            class="w-12 bg-gray-700 border border-gray-600 rounded px-1 py-0.5 text-center text-sm font-bold cursor-pointer focus:cursor-text ${isCurrentTurn ? 'text-amber-400 ring-2 ring-amber-500' : 'text-yellow-400'}">
+                            onchange="updateInitiative(${c.id}, this.value)"
+                            class="w-12 bg-gray-700 border border-gray-600 rounded px-1 py-0.5 text-center text-sm font-bold cursor-pointer focus:cursor-text ${
+                              isCurrentTurn
+                                ? "text-amber-400 ring-2 ring-amber-500"
+                                : "text-yellow-400"
+                            }">
                     </td>
                     <td class="py-3 px-3 font-medium ${nameClass}">
-                        ${nameIcon} ${c.name} ${isCurrentTurn ? '<span class="text-xs bg-amber-500 text-gray-900 px-1.5 py-0.5 rounded ml-2 font-bold tracking-wide animate-pulse">ACTIVE</span>' : ''}
+                        ${nameIcon} ${c.name} ${
+                          isCurrentTurn
+                            ? '<span class="text-xs bg-amber-500 text-gray-900 px-1.5 py-0.5 rounded ml-2 font-bold tracking-wide animate-pulse">ACTIVE</span>'
+                            : ""
+                        }
                     </td>
                     <td class="py-3 px-3">
                         ${hpHtml}
@@ -372,120 +522,138 @@
                         <button onclick="removeCombatant(${index})" class="text-gray-500 hover:text-red-500 text-sm transition">✕</button>
                     </td>
                 `;
-                tableBody.appendChild(tr);
-            });
+          tableBody.appendChild(tr);
+        });
+      }
+
+      function sortInitiative() {
+        combatants.sort((a, b) => b.initiative - a.initiative);
+
+        if (combatants.length > 0) {
+          activeTurnIndex = 0;
+          if (
+            combatants[activeTurnIndex].isMonster &&
+            combatants[activeTurnIndex].currentHp <= 0
+          ) {
+            findNextLivingTurn(1);
+          }
+        } else {
+          activeTurnIndex = null;
+        }
+        renderTable();
+      }
+
+      function changeTurn(direction) {
+        if (combatants.length === 0) return;
+
+        if (activeTurnIndex === null) {
+          activeTurnIndex = 0;
+        } else {
+          activeTurnIndex += direction;
+          wrapActiveTurnIndex();
         }
 
-        function sortInitiative() {
-            combatants.sort((a, b) => b.initiative - a.initiative);
-            
-            if (combatants.length > 0) {
-                activeTurnIndex = 0;
-                if (combatants[activeTurnIndex].isMonster && combatants[activeTurnIndex].currentHp <= 0) {
-                    findNextLivingTurn(1);
-                }
-            } else {
-                activeTurnIndex = null;
-            }
-            renderTable();
+        if (
+          combatants[activeTurnIndex].isMonster &&
+          combatants[activeTurnIndex].currentHp <= 0
+        ) {
+          findNextLivingTurn(direction);
         }
 
-        function changeTurn(direction) {
-            if (combatants.length === 0) return;
-            
-            if (activeTurnIndex === null) {
-                activeTurnIndex = 0;
-            } else {
-                activeTurnIndex += direction;
-                wrapActiveTurnIndex();
-            }
+        renderTable();
+      }
 
-            if (combatants[activeTurnIndex].isMonster && combatants[activeTurnIndex].currentHp <= 0) {
-                findNextLivingTurn(direction);
-            }
-            
-            renderTable();
+      function findNextLivingTurn(direction) {
+        const startPos = activeTurnIndex;
+        let checks = 0;
+
+        while (
+          combatants[activeTurnIndex].isMonster &&
+          combatants[activeTurnIndex].currentHp <= 0 &&
+          checks < combatants.length
+        ) {
+          activeTurnIndex += direction;
+          wrapActiveTurnIndex();
+          checks++;
         }
 
-        function findNextLivingTurn(direction) {
-            const startPos = activeTurnIndex;
-            let checks = 0;
-
-            while (combatants[activeTurnIndex].isMonster && combatants[activeTurnIndex].currentHp <= 0 && checks < combatants.length) {
-                activeTurnIndex += direction;
-                wrapActiveTurnIndex();
-                checks++;
-            }
-
-            if (checks >= combatants.length) {
-                activeTurnIndex = startPos;
-            }
+        if (checks >= combatants.length) {
+          activeTurnIndex = startPos;
         }
+      }
 
-        function wrapActiveTurnIndex() {
-            if (activeTurnIndex >= combatants.length) {
-                activeTurnIndex = 0;
-            } else if (activeTurnIndex < 0) {
-                activeTurnIndex = combatants.length - 1;
-            }
+      function wrapActiveTurnIndex() {
+        if (activeTurnIndex >= combatants.length) {
+          activeTurnIndex = 0;
+        } else if (activeTurnIndex < 0) {
+          activeTurnIndex = combatants.length - 1;
         }
+      }
 
-        function updateInitiative(id, newValue) {
-            const combatant = combatants.find(c => c.id === id);
-            if (combatant) {
-                combatant.initiative = parseInt(newValue) || 0;
-            }
+      function updateInitiative(id, newValue) {
+        const combatant = combatants.find((c) => c.id === id);
+        if (combatant) {
+          combatant.initiative = parseInt(newValue) || 0;
         }
+      }
 
-        function handleHpKeydown(event, id, inputElement) {
-            if (event.key === 'Enter') {
-                event.preventDefault(); 
-                const valueStr = inputElement.value.trim();
-                const combatant = combatants.find(c => c.id === id);
+      function handleHpKeydown(event, id, inputElement) {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          const valueStr = inputElement.value.trim();
+          const combatant = combatants.find((c) => c.id === id);
 
-                if (!combatant) return;
+          if (!combatant) return;
 
-                if (valueStr.startsWith('+') || valueStr.startsWith('-')) {
-                    const modifier = parseInt(valueStr) || 0;
-                    combatant.currentHp += modifier;
-                } else {
-                    combatant.currentHp = parseInt(valueStr) || 0;
-                }
+          if (valueStr.startsWith("+") || valueStr.startsWith("-")) {
+            const modifier = parseInt(valueStr) || 0;
+            combatant.currentHp += modifier;
+          } else {
+            combatant.currentHp = parseInt(valueStr) || 0;
+          }
 
-                renderTable(); 
-            }
+          renderTable();
         }
+      }
 
-        function removeCombatant(index) {
-            combatants.splice(index, 1);
-            
-            if (combatants.length === 0) {
-                activeTurnIndex = null;
-            } else if (activeTurnIndex >= combatants.length) {
-                activeTurnIndex = 0;
-            }
-            renderTable();
-        }
+      function removeCombatant(index) {
+        combatants.splice(index, 1);
 
-        function clearEncounter() {
-            if (confirm("Are you sure you want to clear the entire active initiative order?")) {
-                combatants = [];
-                activeTurnIndex = null;
-                renderTable();
-            }
+        if (combatants.length === 0) {
+          activeTurnIndex = null;
+        } else if (activeTurnIndex >= combatants.length) {
+          activeTurnIndex = 0;
         }
+        renderTable();
+      }
 
-        function clearStorageMemory(event) {
-            event.preventDefault(); 
-            event.stopPropagation();
-            if (confirm("Completely wipe your bestiary library and all saved templates?")) {
-                localStorage.removeItem('dm_combat_templates');
-                savedTemplates = [];
-                activeTurnIndex = null;
-                updateLibraryUI();
-                alert("Bestiary cleared!");
-            }
+      function clearEncounter() {
+        if (
+          confirm(
+            "Are you sure you want to clear the entire active initiative order?",
+          )
+        ) {
+          combatants = [];
+          activeTurnIndex = null;
+          renderTable();
         }
+      }
+
+      function clearStorageMemory(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        if (
+          confirm(
+            "Completely wipe your bestiary library and all saved templates?",
+          )
+        ) {
+          localStorage.removeItem("dm_combat_templates");
+          savedTemplates = [];
+          activeTurnIndex = null;
+          updateLibraryUI();
+          alert("Bestiary cleared!");
+        }
+      }
     </script>
-</body>
+  </body>
 </html>
