@@ -628,9 +628,8 @@
                         <div class="flex items-center space-x-1">
                             <input type="text" value="${c.currentHp}"
                                 onclick="this.select()"
-                                onkeydown="handleHpKeydown(event, ${
-                                  c.id
-                                }, this)"
+                                onchange="applyHpInput(${c.id}, this.value)"
+                                onkeydown="handleHpKeydown(event, this)"
                                 class="w-16 bg-gray-700 border border-gray-600 rounded px-1.5 py-0.5 text-center text-sm font-semibold cursor-pointer focus:cursor-text ${
                                   isDead
                                     ? "text-red-500 line-through"
@@ -782,23 +781,31 @@
         }
       }
 
-      function handleHpKeydown(event, id, inputElement) {
+      // Enter just commits the field; the actual math runs in applyHpInput,
+      // triggered by the resulting change event (which also fires on blur).
+      function handleHpKeydown(event, inputElement) {
         if (event.key === "Enter") {
           event.preventDefault();
-          const valueStr = inputElement.value.trim();
-          const combatant = combatants.find((c) => c.id === id);
-
-          if (!combatant) return;
-
-          if (valueStr.startsWith("+") || valueStr.startsWith("-")) {
-            const modifier = parseInt(valueStr) || 0;
-            combatant.currentHp += modifier;
-          } else {
-            combatant.currentHp = parseInt(valueStr) || 0;
-          }
-
-          renderTable();
+          inputElement.blur();
         }
+      }
+
+      // Applies an HP edit: "+N"/"-N" adjusts, a bare number overwrites.
+      // Runs on change/blur so damage isn't lost when clicking away.
+      function applyHpInput(id, valueStr) {
+        const combatant = combatants.find((c) => c.id === id);
+        if (!combatant) return;
+
+        const trimmed = valueStr.trim();
+        if (trimmed === "") return; // nothing entered — leave HP untouched
+
+        if (trimmed.startsWith("+") || trimmed.startsWith("-")) {
+          combatant.currentHp += parseInt(trimmed) || 0;
+        } else {
+          combatant.currentHp = parseInt(trimmed) || 0;
+        }
+
+        renderTable();
       }
 
       function removeCombatant(index) {
