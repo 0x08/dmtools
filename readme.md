@@ -18,7 +18,7 @@ No servers, no databases, no complex setup. Just open the HTML file and play.
 
 ### 1. Active Turn & Round Manager
 
-- **Next / Previous Cycling**: Use the **Next ▶** and **◀ Previous** buttons to cycle through characters seamlessly. The tracker automatically loops cleanly from the bottom of the order back to the top (and vice versa).
+- **Next / Previous Cycling**: Use the **Next ▶** and **◀ Previous** buttons — or the **← / → arrow keys** — to cycle through characters seamlessly. The tracker automatically loops cleanly from the bottom of the order back to the top (and vice versa). (Arrow keys are ignored while your cursor is in a text field, so they never clash with typing.)
 - **Round Counter ⏱️**: Clicking **Sort 🎲** kicks off **Round 1**, shown as a badge next to the Initiative Order heading. Every time the turn loops from the bottom of the order back to the top it ticks up (and **◀ Previous** rewinds it back down, never below 1).
 - **Visual Turn Frame**: The combatant whose turn it is instantly highlights with an amber glow, a pulsing `ACTIVE` banner, and a `⚔️` icon so you can see who is acting at a glance.
 - **Smart Death Skipping 🤖**: When a monster hits `0` HP or lower, the turn tracker will automatically skip past them during turn cycles, ensuring you only pause on combatants who are actually conscious.

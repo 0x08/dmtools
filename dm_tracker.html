@@ -196,12 +196,14 @@
             >
               <button
                 onclick="changeTurn(-1)"
+                title="Previous turn (← arrow key)"
                 class="bg-gray-700 hover:bg-gray-600 text-white text-sm font-bold py-2 px-3 rounded transition shadow"
               >
                 ◀ Previous
               </button>
               <button
                 onclick="changeTurn(1)"
+                title="Next turn (→ arrow key)"
                 class="bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-bold py-2 px-5 rounded transition shadow flex items-center gap-1"
               >
                 Next ▶
@@ -246,6 +248,10 @@
             <p>
               🤖 Dead monsters (0 HP or lower) are automatically skipped when
               cycling turns.
+            </p>
+            <p>
+              ⌨️ Use the ← and → arrow keys to step through turns (when your
+              cursor isn't in a text field).
             </p>
             <p>
               🎲 New combatants start <em>unrolled</em> (dashed amber box in the
@@ -335,6 +341,33 @@
       updateLibraryUI();
       loadEncounter();
       renderTable();
+
+      // --- KEYBOARD SHORTCUTS ---
+      // Arrow keys step through turns for hands-free play behind the screen.
+      // Ignored while typing in a field so they don't fight text/number entry.
+      document.addEventListener("keydown", (e) => {
+        const el = e.target;
+        const tag = (el.tagName || "").toLowerCase();
+        if (
+          tag === "input" ||
+          tag === "textarea" ||
+          tag === "select" ||
+          el.isContentEditable ||
+          e.metaKey ||
+          e.ctrlKey ||
+          e.altKey
+        ) {
+          return;
+        }
+
+        if (e.key === "ArrowRight") {
+          e.preventDefault();
+          changeTurn(1);
+        } else if (e.key === "ArrowLeft") {
+          e.preventDefault();
+          changeTurn(-1);
+        }
+      });
 
       // Toggle Max HP input visibility based on Monster checkbox
       monsterToggle.addEventListener("change", (e) => {
