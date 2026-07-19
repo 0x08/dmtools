@@ -54,12 +54,16 @@
               <div class="grid grid-cols-2 gap-2">
                 <div>
                   <label class="block text-sm font-medium mb-1"
-                    >Initiative</label
+                    >Initiative
+                    <span class="text-gray-500 font-normal text-xs"
+                      >(optional)</span
+                    ></label
                   >
                   <input
                     type="number"
                     id="initiative"
-                    value="0"
+                    placeholder="—"
+                    title="Leave blank to roll it later from the initiative list"
                     class="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white focus:outline-none focus:border-red-500"
                   />
                 </div>
@@ -221,6 +225,7 @@
                   <th class="py-2 px-3 w-16">Init</th>
                   <th class="py-2 px-3">Name</th>
                   <th class="py-2 px-3 w-48">HP Tracker</th>
+                  <th class="py-2 px-3 w-28 text-center">Roll</th>
                   <th class="py-2 px-3 w-12 text-center">Actions</th>
                 </tr>
               </thead>
@@ -237,6 +242,12 @@
             <p>
               🤖 Dead monsters (0 HP or lower) are automatically skipped when
               cycling turns.
+            </p>
+            <p>
+              🎲 New combatants start <em>unrolled</em> (dashed amber box in the
+              Init column). Set a modifier with the spinner in the Roll column
+              and click the dice to roll a d20, or just type a value you rolled
+              yourself into the Init box — either way the dice then disappears.
             </p>
           </div>
         </div>
@@ -317,7 +328,7 @@
         baseName,
         isMonster,
         maxHp,
-        initiative = 0,
+        initiative = null,
       ) {
         const existingMatches = combatants.filter(
           (c) => c.baseName.toLowerCase() === baseName.toLowerCase(),
@@ -349,8 +360,8 @@
         e.preventDefault();
 
         const baseName = nameInput.value.trim();
-        const initiative =
-          parseInt(document.getElementById("initiative").value) || 0;
+        const initRaw = document.getElementById("initiative").value.trim();
+        const initiative = initRaw === "" ? null : parseInt(initRaw) || 0;
         const isMonster = monsterToggle.checked;
         const maxHp = isMonster ? parseInt(maxHpInput.value) || 0 : null;
 
@@ -423,7 +434,12 @@
           (t) => t.name.toLowerCase() === name.toLowerCase(),
         );
         if (match) {
-          addCombatantToEncounter(match.name, match.isMonster, match.maxHp, 0);
+          addCombatantToEncounter(
+            match.name,
+            match.isMonster,
+            match.maxHp,
+            null,
+          );
         }
       }
 
@@ -470,12 +486,94 @@
 
       // --- ACTIVE COMBAT MANAGEMENT ---
 
+      // Builds the Initiative cell (first column) — just the value.
+      // Unrolled combatants show a dashed amber box; the 🎲 lives in the
+      // separate Roll column and disappears once a value is set.
+      function renderInitCell(c, isCurrentTurn) {
+        if (c.initiative === null || c.initiative === undefined) {
+          return `
+            <input type="number" placeholder="—" value=""
+              onclick="this.select()"
+              onchange="setInitiativeManual(${c.id}, this.value)"
+              title="Type a value you rolled yourself, or use the 🎲 on the right"
+              class="w-12 bg-gray-700/60 border border-dashed border-amber-500/70 rounded px-1 py-0.5 text-center text-sm font-bold text-amber-300 placeholder-amber-400/50 cursor-pointer focus:cursor-text focus:outline-none">`;
+        }
+
+        const rollTitle = c.rollInfo ? ` title="${c.rollInfo}"` : "";
+        return `
+          <input type="number" value="${c.initiative}"
+            onclick="this.select()"
+            onchange="updateInitiative(${c.id}, this.value)"${rollTitle}
+            class="w-12 bg-gray-700 border border-gray-600 rounded px-1 py-0.5 text-center text-sm font-bold cursor-pointer focus:cursor-text ${
+              isCurrentTurn
+                ? "text-amber-400 ring-2 ring-amber-500"
+                : "text-yellow-400"
+            }">`;
+      }
+
+      // Builds the Roll cell — a 🎲 plus an up/down modifier spinner.
+      // Shown only while the initiative is still unset; once a value exists
+      // (rolled or typed manually), this cell is empty.
+      function renderRollCell(c) {
+        if (c.initiative !== null && c.initiative !== undefined) return "";
+        const mod = c.rollModifier || 0;
+        return `
+          <div class="flex items-center justify-center gap-1">
+            <button onclick="rollInitiative(${c.id})" title="Roll d20 + modifier"
+              class="text-lg leading-none hover:scale-125 transition animate-pulse cursor-pointer">🎲</button>
+            <input type="number" step="1" value="${mod}"
+              onclick="this.select()"
+              onchange="setRollModifier(${c.id}, this.value)"
+              title="Roll modifier added to (or subtracted from) the d20"
+              class="w-14 bg-gray-700 border border-amber-500/70 rounded px-1 py-0.5 text-center text-sm text-amber-200 focus:outline-none">
+          </div>`;
+      }
+
+      // Roll 1d20, add the combatant's chosen modifier, and lock it in.
+      function rollInitiative(id) {
+        const combatant = combatants.find((c) => c.id === id);
+        if (!combatant) return;
+
+        const modifier = combatant.rollModifier || 0;
+        const die = Math.floor(Math.random() * 20) + 1;
+
+        combatant.initiative = die + modifier;
+        const sign = modifier >= 0 ? "+" : "−";
+        combatant.rollInfo = `Rolled d20 (${die}) ${sign} ${Math.abs(
+          modifier,
+        )} = ${combatant.initiative}`;
+
+        renderTable();
+      }
+
+      // Store the roll modifier from the spinner without a full re-render
+      // (the input already shows the value; re-rendering would drop focus).
+      function setRollModifier(id, value) {
+        const combatant = combatants.find((c) => c.id === id);
+        if (!combatant) return;
+        combatant.rollModifier = parseInt(value) || 0;
+        saveEncounter();
+      }
+
+      // Manual entry from the Init column: a blank value keeps it unrolled.
+      function setInitiativeManual(id, value) {
+        const combatant = combatants.find((c) => c.id === id);
+        if (!combatant) return;
+
+        const trimmed = value.trim();
+        combatant.initiative = trimmed === "" ? null : parseInt(trimmed) || 0;
+        if (combatant.initiative !== null) {
+          delete combatant.rollInfo;
+        }
+        renderTable();
+      }
+
       function renderTable() {
         saveEncounter();
         tableBody.innerHTML = "";
 
         if (combatants.length === 0) {
-          tableBody.innerHTML = `<tr><td colspan="4" class="text-center py-8 text-gray-500">No combatants in initiative yet.</td></tr>`;
+          tableBody.innerHTML = `<tr><td colspan="5" class="text-center py-8 text-gray-500">No combatants in initiative yet.</td></tr>`;
           return;
         }
 
@@ -533,15 +631,7 @@
 
           tr.innerHTML = `
                     <td class="py-3 px-3">
-                        <!-- Added onclick="this.select()" to the main row initiative input fields -->
-                        <input type="number" value="${c.initiative}"
-                            onclick="this.select()"
-                            onchange="updateInitiative(${c.id}, this.value)"
-                            class="w-12 bg-gray-700 border border-gray-600 rounded px-1 py-0.5 text-center text-sm font-bold cursor-pointer focus:cursor-text ${
-                              isCurrentTurn
-                                ? "text-amber-400 ring-2 ring-amber-500"
-                                : "text-yellow-400"
-                            }">
+                        ${renderInitCell(c, isCurrentTurn)}
                     </td>
                     <td class="py-3 px-3 font-medium ${nameClass}">
                         ${nameIcon} ${c.name} ${
@@ -554,6 +644,9 @@
                         ${hpHtml}
                     </td>
                     <td class="py-3 px-3 text-center">
+                        ${renderRollCell(c)}
+                    </td>
+                    <td class="py-3 px-3 text-center">
                         <button onclick="removeCombatant(${index})" class="text-gray-500 hover:text-red-500 text-sm transition">✕</button>
                     </td>
                 `;
@@ -562,7 +655,10 @@
       }
 
       function sortInitiative() {
-        combatants.sort((a, b) => b.initiative - a.initiative);
+        // Unrolled combatants (null initiative) sink to the bottom until rolled.
+        combatants.sort(
+          (a, b) => (b.initiative ?? -Infinity) - (a.initiative ?? -Infinity),
+        );
 
         if (combatants.length > 0) {
           activeTurnIndex = 0;
@@ -629,6 +725,7 @@
         const combatant = combatants.find((c) => c.id === id);
         if (combatant) {
           combatant.initiative = parseInt(newValue) || 0;
+          delete combatant.rollInfo;
           saveEncounter();
         }
       }
