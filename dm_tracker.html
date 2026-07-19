@@ -735,9 +735,12 @@
                                       ? "text-amber-300"
                                       : "text-green-400"
                                 }">
-                            <span class="text-gray-400 text-xs">/ ${
-                              c.maxHp
-                            }</span>
+                            <span class="text-gray-400 text-xs">/</span>
+                            <input type="number" value="${c.maxHp}"
+                                onclick="this.select()"
+                                onchange="updateMaxHp(${c.id}, this.value)"
+                                title="Max HP"
+                                class="w-12 bg-gray-700 border border-gray-600 rounded px-1 py-0.5 text-center text-xs text-gray-300 focus:outline-none">
                         </div>
                     `;
           }
@@ -762,12 +765,19 @@
                     <td class="py-3 px-3">
                         ${renderInitCell(c, isCurrentTurn)}
                     </td>
-                    <td class="py-3 px-3 font-medium ${nameClass}">
-                        ${nameIcon} ${c.name} ${
-                          isCurrentTurn
-                            ? '<span class="text-xs bg-amber-500 text-gray-900 px-1.5 py-0.5 rounded ml-2 font-bold tracking-wide animate-pulse">ACTIVE</span>'
-                            : ""
-                        }
+                    <td class="py-3 px-3 font-medium">
+                        <div class="flex items-center gap-1">
+                            <span>${nameIcon}</span>
+                            <input type="text" value="${c.name}"
+                                onchange="updateName(${c.id}, this.value)"
+                                title="Click to rename"
+                                class="flex-1 min-w-0 bg-transparent border border-transparent hover:border-gray-600 focus:border-gray-500 focus:bg-gray-700 rounded px-1 py-0.5 focus:outline-none ${nameClass}">
+                            ${
+                              isCurrentTurn
+                                ? '<span class="text-xs bg-amber-500 text-gray-900 px-1.5 py-0.5 rounded font-bold tracking-wide animate-pulse whitespace-nowrap">ACTIVE</span>'
+                                : ""
+                            }
+                        </div>
                     </td>
                     <td class="py-3 px-3">
                         ${hpHtml}
@@ -887,6 +897,23 @@
           delete combatant.rollInfo;
           saveEncounter();
         }
+      }
+
+      // Rename a combatant in place. A blank entry reverts to the old name.
+      function updateName(id, value) {
+        const combatant = combatants.find((c) => c.id === id);
+        if (!combatant) return;
+        const trimmed = value.trim();
+        if (trimmed !== "") combatant.name = trimmed;
+        renderTable();
+      }
+
+      // Edit a monster's Max HP after it has been added.
+      function updateMaxHp(id, value) {
+        const combatant = combatants.find((c) => c.id === id);
+        if (!combatant) return;
+        combatant.maxHp = parseInt(value) || 0;
+        renderTable();
       }
 
       // Enter just commits the field; the actual math runs in applyHpInput,
