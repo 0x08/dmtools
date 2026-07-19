@@ -345,10 +345,21 @@
         let finalName = baseName;
 
         if (existingMatches.length > 0) {
-          if (existingMatches.length === 1) {
+          // Give a lone, still-unnumbered predecessor a "#1" so the group
+          // reads #1, #2, ...
+          if (
+            existingMatches.length === 1 &&
+            existingMatches[0].name === existingMatches[0].baseName
+          ) {
             existingMatches[0].name = `${existingMatches[0].baseName} #1`;
           }
-          finalName = `${baseName} #${existingMatches.length + 1}`;
+          // Number one past the highest existing suffix (not the count), so it
+          // never collides even after a middle duplicate has been removed.
+          const highest = existingMatches.reduce((max, c) => {
+            const match = c.name.match(/#(\d+)$/);
+            return Math.max(max, match ? parseInt(match[1], 10) : 1);
+          }, 1);
+          finalName = `${baseName} #${highest + 1}`;
         }
 
         combatants.push({
