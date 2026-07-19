@@ -27,7 +27,8 @@ No servers, no databases, no complex setup. Just open the HTML file and play.
 
 - **Instant Re-focus**: Pressing Enter to add a combatant automatically snaps your typing cursor straight back into the **Name** field, allowing you to queue up a whole group of enemies entirely from your keyboard.
 - **Auto-Select Fields**: Clicking into any **Initiative** score or **HP** field instantly highlights the entire value, allowing you to overwrite or modify text without wasting time hitting backspace.
-- **Auto-Numbering Duplicates**: Adding multiple identical monsters (e.g., clicking your "Goblin" template 4 times) automatically decorates them as `Goblin #1`, `Goblin #2`, etc.
+- **Auto-Numbering Duplicates**: Adding multiple identical monsters (e.g., clicking your "Goblin" template 4 times) automatically decorates them as `Goblin #1`, `Goblin #2`, etc. Numbers stay unique even after you remove one from the middle of the group.
+- **Editable Rows**: Rename any combatant, or adjust a monster's Max HP, right in the initiative row at any time — just click the field and type. Blank names revert to the previous value.
 - **Initiative: Roll or Enter**: New combatants join the order **unrolled**, flagged with a dashed amber box in the **Init** column so you can see at a glance who still needs an initiative. A dedicated **Roll** column shows a pulsing `🎲` next to an up/down modifier spinner: dial in a `+/-` modifier and click the dice to have the app roll a `d20`, or just type a value you rolled at the table yourself into the Init box. Either way, once a value is set the dice and spinner disappear.
 
 ### 3. Integrated Collapsible Bestiary
@@ -35,15 +36,15 @@ No servers, no databases, no complex setup. Just open the HTML file and play.
 - **Accordion View**: The Library / Bestiary module stays neatly collapsed by default to keep your screen tidy, unfolding with a single click when you need to spawn reinforcements.
 - **One-Click Spawning**: Click any profile card inside your library to instantly drop that character or creature into the active initiative order with their default stats.
 - **Local Storage Save**: Creatures added to your library are committed to HTML5 `localStorage`. They will stay right there safely even if you close your laptop.
-- **Encounter Auto-Save**: The active initiative order (combatants, current HP, and whose turn it is) is also saved to `localStorage` after every change, so an accidental page refresh mid-combat won't wipe your fight. (Note: `localStorage` is cleared if you clear your browser cache/site data.)
+- **Encounter Auto-Save**: The active initiative order (combatants, current HP, initiative, whose turn it is, and the round number) is also saved to `localStorage` after every change, so an accidental page refresh mid-combat won't wipe your fight. (Note: `localStorage` is cleared if you clear your browser cache/site data.)
 
 ---
 
 ## ⌨️ Shortcuts & Math Engine
 
 - **In the Active Initiative List**:
-  - Click an HP box, type `-Value` (e.g., `-22`) or `+Value` (e.g., `+10`), and press **Enter** to let the engine calculate damage/healing dynamically.
-  - Type a flat number (e.g., `45`) and hit **Enter** to completely overwrite their current HP state.
+  - Click an HP box, type `-Value` (e.g., `-22`) or `+Value` (e.g., `+10`), then press **Enter** or click away to let the engine calculate damage/healing dynamically.
+  - Type a flat number (e.g., `45`) and press **Enter** (or click away) to completely overwrite their current HP state.
   - Clicking **Sort 🎲** will arrange combatants from highest initiative to lowest and automatically lock the active turn to the top of the round. Any combatants you haven't rolled yet sink to the bottom until their initiative is set.
   - **Tie-breaking**: When two combatants share an initiative, player characters are listed above monsters, and tied monsters are separated automatically by a hidden roll-off. Tied **player characters** can be reordered by hand with the **▲/▼ arrows** in the Actions column (they appear only on tied PC rows, after sorting) — handy when your players reroll to settle a tie. The chosen order is remembered and survives re-sorting.
 - **In the Bestiary Creator**:
