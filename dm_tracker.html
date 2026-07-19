@@ -180,10 +180,14 @@
           <div
             class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4 pb-4 border-b border-gray-700"
           >
-            <div>
+            <div class="flex items-center gap-3">
               <h2 class="text-xl font-semibold text-gray-200">
                 Initiative Order
               </h2>
+              <span
+                id="round-display"
+                class="hidden bg-amber-500/20 text-amber-300 border border-amber-500/40 text-sm font-bold px-3 py-1 rounded-full whitespace-nowrap"
+              ></span>
             </div>
 
             <!-- TURN MANAGEMENT BUTTONS -->
@@ -261,13 +265,15 @@
       let savedTemplates =
         JSON.parse(localStorage.getItem("dm_combat_templates")) || [];
       let activeTurnIndex = null;
+      // Combat round counter: null until combat starts (Sort / first Next).
+      let roundNumber = null;
 
       // Persist the live encounter so an accidental refresh mid-combat
       // doesn't wipe the initiative order.
       function saveEncounter() {
         localStorage.setItem(
           ENCOUNTER_KEY,
-          JSON.stringify({ combatants, activeTurnIndex }),
+          JSON.stringify({ combatants, activeTurnIndex, roundNumber }),
         );
       }
 
@@ -280,6 +286,8 @@
             saved.activeTurnIndex < combatants.length
               ? saved.activeTurnIndex
               : null;
+          roundNumber =
+            typeof saved.roundNumber === "number" ? saved.roundNumber : null;
         }
       }
 
@@ -292,6 +300,7 @@
       const datalist = document.getElementById("saved-names");
       const maxHpInput = document.getElementById("max-hp");
       const libraryList = document.getElementById("library-list");
+      const roundDisplay = document.getElementById("round-display");
 
       // --- INITIALIZATION ---
       updateLibraryUI();
@@ -568,8 +577,20 @@
         renderTable();
       }
 
+      // Show "Round N" once combat has started; hide it otherwise.
+      function updateRoundDisplay() {
+        if (roundNumber === null) {
+          roundDisplay.classList.add("hidden");
+          roundDisplay.textContent = "";
+        } else {
+          roundDisplay.classList.remove("hidden");
+          roundDisplay.textContent = `⏱️ Round ${roundNumber}`;
+        }
+      }
+
       function renderTable() {
         saveEncounter();
+        updateRoundDisplay();
         tableBody.innerHTML = "";
 
         if (combatants.length === 0) {
@@ -662,14 +683,14 @@
 
         if (combatants.length > 0) {
           activeTurnIndex = 0;
-          if (
-            combatants[activeTurnIndex].isMonster &&
-            combatants[activeTurnIndex].currentHp <= 0
-          ) {
-            findNextLivingTurn(1);
-          }
+          // Suppress round accounting while skipping any dead combatants at
+          // the top, then start the fresh combat at round 1.
+          roundNumber = null;
+          findNextLivingTurn(1);
+          roundNumber = 1;
         } else {
           activeTurnIndex = null;
+          roundNumber = null;
         }
         renderTable();
       }
@@ -677,47 +698,67 @@
       function changeTurn(direction) {
         if (combatants.length === 0) return;
 
+        // Nobody left standing — don't move or count phantom rounds.
+        const anyLiving = combatants.some(
+          (c) => !(c.isMonster && c.currentHp <= 0),
+        );
+        if (!anyLiving) return;
+
         if (activeTurnIndex === null) {
           activeTurnIndex = 0;
+          if (roundNumber === null) roundNumber = 1;
         } else {
-          activeTurnIndex += direction;
-          wrapActiveTurnIndex();
+          applyRoundWrap(stepIndex(direction));
         }
 
-        if (
-          combatants[activeTurnIndex].isMonster &&
-          combatants[activeTurnIndex].currentHp <= 0
-        ) {
-          findNextLivingTurn(direction);
-        }
-
+        findNextLivingTurn(direction);
         renderTable();
+      }
+
+      // Advances activeTurnIndex by one in `direction`, wrapping at the ends.
+      // Returns +1 if it looped bottom->top, -1 if top->bottom, else 0.
+      function stepIndex(direction) {
+        activeTurnIndex += direction;
+        if (activeTurnIndex >= combatants.length) {
+          activeTurnIndex = 0;
+          return 1;
+        }
+        if (activeTurnIndex < 0) {
+          activeTurnIndex = combatants.length - 1;
+          return -1;
+        }
+        return 0;
+      }
+
+      // A forward loop bumps the round; a backward loop rewinds it (min 1).
+      function applyRoundWrap(wrap) {
+        if (roundNumber === null || wrap === 0) return;
+        roundNumber = wrap > 0 ? roundNumber + 1 : Math.max(1, roundNumber - 1);
       }
 
       function findNextLivingTurn(direction) {
         const startPos = activeTurnIndex;
         let checks = 0;
+        let wraps = 0;
 
         while (
           combatants[activeTurnIndex].isMonster &&
           combatants[activeTurnIndex].currentHp <= 0 &&
           checks < combatants.length
         ) {
-          activeTurnIndex += direction;
-          wrapActiveTurnIndex();
+          wraps += stepIndex(direction);
           checks++;
         }
 
         if (checks >= combatants.length) {
+          // Everyone is down — stay put and don't count phantom rounds.
           activeTurnIndex = startPos;
+          return;
         }
-      }
 
-      function wrapActiveTurnIndex() {
-        if (activeTurnIndex >= combatants.length) {
-          activeTurnIndex = 0;
-        } else if (activeTurnIndex < 0) {
-          activeTurnIndex = combatants.length - 1;
+        // Account for any full loops crossed while skipping dead combatants.
+        for (let i = Math.abs(wraps); i > 0; i--) {
+          applyRoundWrap(Math.sign(wraps));
         }
       }
 
@@ -754,6 +795,7 @@
 
         if (combatants.length === 0) {
           activeTurnIndex = null;
+          roundNumber = null;
         } else if (activeTurnIndex !== null) {
           // Keep the highlight on the same combatant when someone above them
           // is removed; clamp if the active row itself was the last one.
@@ -774,6 +816,7 @@
         ) {
           combatants = [];
           activeTurnIndex = null;
+          roundNumber = null;
           renderTable();
         }
       }
