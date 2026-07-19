@@ -8,7 +8,7 @@ No servers, no databases, no complex setup. Just open the HTML file and play.
 
 ## 🚀 Quick Start
 
-1. **Download the code**: Save the `dm_tracker.html` file to your local computer.
+1. **Download the code**: Save the `dm_tracker.html` file to your local computer. Everything (including the styling engine) is bundled inside that one file, so it needs no internet connection.
 2. **Launch**: Double-click the file to open it in any modern web browser (Chrome, Firefox, Edge, Safari).
 3. **Play**: Bookmark it for immediate access behind your DM screen.
 
@@ -32,7 +32,8 @@ No servers, no databases, no complex setup. Just open the HTML file and play.
 
 - **Accordion View**: The Library / Bestiary module stays neatly collapsed by default to keep your screen tidy, unfolding with a single click when you need to spawn reinforcements.
 - **One-Click Spawning**: Click any profile card inside your library to instantly drop that character or creature into the active initiative order with their default stats.
-- **Local Storage Save**: Creatures added to your library are committed to HTML5 `localStorage`. They will stay right there safely even if you close your laptop or clear your browser cache.
+- **Local Storage Save**: Creatures added to your library are committed to HTML5 `localStorage`. They will stay right there safely even if you close your laptop.
+- **Encounter Auto-Save**: The active initiative order (combatants, current HP, and whose turn it is) is also saved to `localStorage` after every change, so an accidental page refresh mid-combat won't wipe your fight. (Note: `localStorage` is cleared if you clear your browser cache/site data.)
 
 ---
 
