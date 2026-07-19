@@ -45,6 +45,7 @@ No servers, no databases, no complex setup. Just open the HTML file and play.
   - Click an HP box, type `-Value` (e.g., `-22`) or `+Value` (e.g., `+10`), and press **Enter** to let the engine calculate damage/healing dynamically.
   - Type a flat number (e.g., `45`) and hit **Enter** to completely overwrite their current HP state.
   - Clicking **Sort 🎲** will arrange combatants from highest initiative to lowest and automatically lock the active turn to the top of the round. Any combatants you haven't rolled yet sink to the bottom until their initiative is set.
+  - **Tie-breaking**: When two combatants share an initiative, player characters are listed above monsters, and tied monsters are separated automatically by a hidden roll-off. Tied **player characters** can be reordered by hand with the **▲/▼ arrows** in the Actions column (they appear only on tied PC rows, after sorting) — handy when your players reroll to settle a tie. The chosen order is remembered and survives re-sorting.
 - **In the Bestiary Creator**:
   - Leaving Max HP at `0` automatically registers a profile as a Player Character (`🛡️`). Setting it above `0` registers them as a Monster (`😈`).
 

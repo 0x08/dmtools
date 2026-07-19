@@ -232,7 +232,7 @@
                   <th class="py-2 px-3">Name</th>
                   <th class="py-2 px-3 w-48">HP Tracker</th>
                   <th class="py-2 px-3 w-28 text-center">Roll</th>
-                  <th class="py-2 px-3 w-12 text-center">Actions</th>
+                  <th class="py-2 px-3 w-24 text-center">Actions</th>
                 </tr>
               </thead>
               <tbody id="tracker-table-body">
@@ -258,6 +258,12 @@
               Init column). Set a modifier with the spinner in the Roll column
               and click the dice to roll a d20, or just type a value you rolled
               yourself into the Init box — either way the dice then disappears.
+            </p>
+            <p>
+              ⚖️ On an initiative tie, players are listed above monsters and
+              tied monsters are ordered automatically. After sorting, use the
+              ▲/▼ arrows in the Actions column to reorder tied player characters
+              (e.g. after they reroll).
             </p>
           </div>
         </div>
@@ -432,6 +438,9 @@
           isMonster: isMonster,
           currentHp: maxHp,
           maxHp: maxHp,
+          // Hidden roll-off used to break initiative ties. Monsters keep the
+          // random value; tied PCs can be reordered manually (see moveWithinTie).
+          tieBreaker: Math.random(),
         });
 
         renderTable();
@@ -605,6 +614,38 @@
           </div>`;
       }
 
+      // Up/down controls to reorder a PC among same-initiative PCs (players
+      // reroll ties at the table). Only rendered when such a tied neighbour
+      // exists, so ordinary rows stay uncluttered.
+      function renderReorderControls(c, index) {
+        if (
+          c.isMonster ||
+          c.initiative === null ||
+          c.initiative === undefined
+        ) {
+          return "";
+        }
+        const above = combatants[index - 1];
+        const below = combatants[index + 1];
+        const canUp =
+          above && !above.isMonster && above.initiative === c.initiative;
+        const canDown =
+          below && !below.isMonster && below.initiative === c.initiative;
+        if (!canUp && !canDown) return "";
+
+        const arrow = (dir, symbol, enabled, label) =>
+          enabled
+            ? `<button onclick="moveWithinTie(${c.id}, ${dir})" title="${label}"
+                class="w-7 h-6 flex items-center justify-center rounded text-gray-400 hover:text-amber-300 hover:bg-gray-700 transition cursor-pointer">${symbol}</button>`
+            : `<span class="w-7 h-6 flex items-center justify-center text-gray-700">${symbol}</span>`;
+
+        return `
+          <div class="flex items-center gap-0.5 leading-none">
+            ${arrow(-1, "▲", canUp, "Move up (break initiative tie)")}
+            ${arrow(1, "▼", canDown, "Move down (break initiative tie)")}
+          </div>`;
+      }
+
       // Roll 1d20, add the combatant's chosen modifier, and lock it in.
       function rollInitiative(id) {
         const combatant = combatants.find((c) => c.id === id);
@@ -734,18 +775,28 @@
                         ${renderRollCell(c)}
                     </td>
                     <td class="py-3 px-3 text-center">
-                        <button onclick="removeCombatant(${index})" class="text-gray-500 hover:text-red-500 text-sm transition">✕</button>
+                        <div class="flex items-center justify-center gap-2">
+                            ${renderReorderControls(c, index)}
+                            <button onclick="removeCombatant(${index})" class="text-gray-500 hover:text-red-500 text-sm transition">✕</button>
+                        </div>
                     </td>
                 `;
           tableBody.appendChild(tr);
         });
       }
 
+      // Initiative order, high to low. Ties break by: players before monsters,
+      // then a stored roll-off (random for monsters, manually reorderable for
+      // PCs via moveWithinTie). Unrolled combatants (null) sink to the bottom.
+      function compareCombatants(a, b) {
+        const diff = (b.initiative ?? -Infinity) - (a.initiative ?? -Infinity);
+        if (diff !== 0) return diff;
+        if (a.isMonster !== b.isMonster) return a.isMonster ? 1 : -1;
+        return (b.tieBreaker ?? 0) - (a.tieBreaker ?? 0);
+      }
+
       function sortInitiative() {
-        // Unrolled combatants (null initiative) sink to the bottom until rolled.
-        combatants.sort(
-          (a, b) => (b.initiative ?? -Infinity) - (a.initiative ?? -Infinity),
-        );
+        combatants.sort(compareCombatants);
 
         if (combatants.length > 0) {
           activeTurnIndex = 0;
@@ -879,6 +930,32 @@
             activeTurnIndex = combatants.length - 1;
           }
         }
+        renderTable();
+      }
+
+      // Reorder a PC among PCs tied on the same initiative. Swaps both the list
+      // position (instant) and the stored tieBreaker (so a later Sort keeps the
+      // chosen order rather than snapping back). direction: -1 = up, +1 = down.
+      function moveWithinTie(id, direction) {
+        const i = combatants.findIndex((c) => c.id === id);
+        if (i < 0) return;
+        const j = i + direction;
+        if (j < 0 || j >= combatants.length) return;
+
+        const a = combatants[i];
+        const b = combatants[j];
+        // Guard: only within a tie, and only between two player characters.
+        if (a.isMonster || b.isMonster || a.initiative !== b.initiative) return;
+
+        [combatants[i], combatants[j]] = [combatants[j], combatants[i]];
+        const swap = a.tieBreaker;
+        a.tieBreaker = b.tieBreaker;
+        b.tieBreaker = swap;
+
+        // Keep the active-turn highlight on whichever combatant it was on.
+        if (activeTurnIndex === i) activeTurnIndex = j;
+        else if (activeTurnIndex === j) activeTurnIndex = i;
+
         renderTable();
       }
 
