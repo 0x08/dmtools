@@ -261,9 +261,41 @@
     <script>
       // --- STATE MANAGEMENT ---
       const ENCOUNTER_KEY = "dm_active_encounter";
+      const TEMPLATES_KEY = "dm_combat_templates";
+
+      // localStorage can throw (corrupt JSON, Safari Private Mode, quota).
+      // These helpers keep a storage failure from taking down the whole app.
+      function readStore(key, fallback) {
+        try {
+          const raw = localStorage.getItem(key);
+          return raw === null ? fallback : JSON.parse(raw);
+        } catch (e) {
+          console.warn(`Could not read "${key}" from localStorage:`, e);
+          return fallback;
+        }
+      }
+
+      function writeStore(key, value) {
+        try {
+          localStorage.setItem(key, JSON.stringify(value));
+        } catch (e) {
+          console.warn(`Could not save "${key}" to localStorage:`, e);
+        }
+      }
+
+      function removeStore(key) {
+        try {
+          localStorage.removeItem(key);
+        } catch (e) {
+          console.warn(`Could not remove "${key}" from localStorage:`, e);
+        }
+      }
+
       let combatants = [];
-      let savedTemplates =
-        JSON.parse(localStorage.getItem("dm_combat_templates")) || [];
+      const storedTemplates = readStore(TEMPLATES_KEY, []);
+      let savedTemplates = Array.isArray(storedTemplates)
+        ? storedTemplates
+        : [];
       let activeTurnIndex = null;
       // Combat round counter: null until combat starts (Sort / first Next).
       let roundNumber = null;
@@ -271,14 +303,11 @@
       // Persist the live encounter so an accidental refresh mid-combat
       // doesn't wipe the initiative order.
       function saveEncounter() {
-        localStorage.setItem(
-          ENCOUNTER_KEY,
-          JSON.stringify({ combatants, activeTurnIndex, roundNumber }),
-        );
+        writeStore(ENCOUNTER_KEY, { combatants, activeTurnIndex, roundNumber });
       }
 
       function loadEncounter() {
-        const saved = JSON.parse(localStorage.getItem(ENCOUNTER_KEY));
+        const saved = readStore(ENCOUNTER_KEY, null);
         if (saved && Array.isArray(saved.combatants)) {
           combatants = saved.combatants;
           activeTurnIndex =
@@ -409,10 +438,7 @@
           savedTemplates.push(newTemplateData);
         }
 
-        localStorage.setItem(
-          "dm_combat_templates",
-          JSON.stringify(savedTemplates),
-        );
+        writeStore(TEMPLATES_KEY, savedTemplates);
         updateLibraryUI();
       }
 
@@ -442,10 +468,7 @@
         savedTemplates = savedTemplates.filter(
           (t) => t.name.toLowerCase() !== name.toLowerCase(),
         );
-        localStorage.setItem(
-          "dm_combat_templates",
-          JSON.stringify(savedTemplates),
-        );
+        writeStore(TEMPLATES_KEY, savedTemplates);
         updateLibraryUI();
       }
 
@@ -847,7 +870,7 @@
             "Completely wipe your bestiary library and all saved templates?",
           )
         ) {
-          localStorage.removeItem("dm_combat_templates");
+          removeStore(TEMPLATES_KEY);
           savedTemplates = [];
           updateLibraryUI();
           alert("Bestiary cleared!");
